@@ -19,7 +19,7 @@ use UnitEnum;
 
 class AlumniResource extends Resource
 {
-protected static $model = Alumni::class;
+protected static ?string $model = Alumni::class;
 
 protected static \UnitEnum|string|null $navigationIcon = 'heroicon-o-academic-cap';
 
