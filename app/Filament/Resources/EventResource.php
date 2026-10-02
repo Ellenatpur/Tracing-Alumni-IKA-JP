@@ -18,30 +18,36 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-calendar';
-
-    protected static \UnitEnum|string|null $navigationGroup = 'Konten & Kegiatan';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
+    protected static string|\UnitEnum|null $navigationGroup = 'Manajemen Event';
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 Forms\Components\TextInput::make('nama_event')
+                    ->label('Nama Event')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('tgl_pelaksanaan')
+
+                // Menggunakan tanggal_event sesuai struktur database
+                Forms\Components\DateTimePicker::make('tanggal_event')
+                    ->label('Tanggal & Waktu Event')
                     ->required(),
+
                 Forms\Components\TextInput::make('lokasi')
-                    ->required()
+                    ->label('Lokasi')
                     ->maxLength(255),
+
+                Forms\Components\FileUpload::make('gambar')
+                    ->label('Gambar / Poster Event')
+                    ->image()
+                    ->directory('event-images'),
+
                 Forms\Components\Textarea::make('deskripsi')
+                    ->label('Deskripsi Event')
+                    ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('link_pendaftaran')
-                    ->url()
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('is_published')
-                    ->label('Publikasikan Event')
-                    ->default(true),
             ]);
     }
 
@@ -49,17 +55,14 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('gambar')->square(),
                 Tables\Columns\TextColumn::make('nama_event')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('tgl_pelaksanaan')->dateTime()->sortable(),
+                Tables\Columns\TextColumn::make('tanggal_event')->dateTime()->sortable(),
                 Tables\Columns\TextColumn::make('lokasi')->searchable(),
-                Tables\Columns\IconColumn::make('is_published')
-                    ->boolean()
-                    ->label('Status Publish'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_published')
-                    ->label('Status Dipublikasikan'),
+                //
             ])
             ->actions([
                 EditAction::make(),

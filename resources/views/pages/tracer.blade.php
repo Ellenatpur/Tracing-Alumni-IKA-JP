@@ -17,10 +17,10 @@
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
     <!-- NAVBAR HEADER -->
-   <x-navbar />
+    <x-navbar />
 
     <!-- KONTEN UTAMA -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-6 sm:px-10 py-10">
+    <main class="grow max-w-7xl w-full mx-auto px-6 sm:px-10 py-10">
         <!-- Header Judul & Subjudul -->
         <div class="mb-8">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-[#1E1B4B] tracking-tight">
@@ -35,7 +35,7 @@
         <form action="{{ url('/tracer') }}" method="GET" class="space-y-4 mb-10">
             <!-- Search Bar + Button -->
             <div class="flex items-center gap-3 max-w-4xl">
-                <div class="relative flex-grow">
+                <div class="relative grow">
                     <input type="text" 
                            name="q" 
                            value="{{ request('q') }}"
@@ -54,6 +54,7 @@
                 <div class="relative">
                     <select name="jurusan" class="appearance-none bg-white border border-slate-300 rounded-xl px-5 py-2.5 pr-10 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#2B1B40] cursor-pointer">
                         <option value="">Jurusan</option>
+                        <option value="PPLG" {{ request('jurusan') == 'PPLG' ? 'selected' : '' }}>PPLG</option>
                         <option value="Teknik Informatika" {{ request('jurusan') == 'Teknik Informatika' ? 'selected' : '' }}>Teknik Informatika</option>
                         <option value="Sistem Informasi" {{ request('jurusan') == 'Sistem Informasi' ? 'selected' : '' }}>Sistem Informasi</option>
                         <option value="Teknik Elektro" {{ request('jurusan') == 'Teknik Elektro' ? 'selected' : '' }}>Teknik Elektro</option>
@@ -62,26 +63,24 @@
                     <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
                 </div>
 
-                
-               <!-- Dropdown Tahun Lulus -->
-<div class="relative">
-    <select name="tahun_lulus" class="appearance-none bg-white border border-slate-300 rounded-xl px-5 py-2.5 pr-10 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#2B1B40] cursor-pointer">
-        <option value="">Tahun Lulus</option>
-        @for($year = date('Y'); $year >= 2000; $year--)
-            <option value="{{ $year }}" {{ request('tahun_lulus') == $year ? 'selected' : '' }}>{{ $year }}</option>
-        @endfor 
-    </select>
-    <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
-</div>
+                <!-- Dropdown Tahun Lulus -->
+                <div class="relative">
+                    <select name="tahun_lulus" class="appearance-none bg-white border border-slate-300 rounded-xl px-5 py-2.5 pr-10 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#2B1B40] cursor-pointer">
+                        <option value="">Tahun Lulus</option>
+                        @for($year = date('Y'); $year >= 2000; $year--)
+                            <option value="{{ $year }}" {{ request('tahun_lulus') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endfor 
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
+                </div>
 
-                <!-- Dropdown Pekerjaan -->
+                <!-- Dropdown Pekerjaan/Status -->
                 <div class="relative">
                     <select name="pekerjaan" class="appearance-none bg-white border border-slate-300 rounded-xl px-5 py-2.5 pr-10 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#2B1B40] cursor-pointer">
-                        <option value="">Pekerjaan</option>
+                        <option value="">Pekerjaan / Status</option>
+                        <option value="kuliah" {{ request('pekerjaan') == 'kuliah' ? 'selected' : '' }}>Kuliah</option>
+                        <option value="Wirausaha" {{ request('pekerjaan') == 'Wirausaha' ? 'selected' : '' }}>Wirausaha</option>
                         <option value="Software Engineer" {{ request('pekerjaan') == 'Software Engineer' ? 'selected' : '' }}>Software Engineer</option>
-                        <option value="Data Analyst" {{ request('pekerjaan') == 'Data Analyst' ? 'selected' : '' }}>Data Analyst</option>
-                        <option value="Entrepreneur" {{ request('pekerjaan') == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
-                        <option value="PNS / ASN" {{ request('pekerjaan') == 'PNS / ASN' ? 'selected' : '' }}>PNS / ASN</option>
                     </select>
                     <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none"></i>
                 </div>
@@ -93,30 +92,40 @@
             @forelse($alumnis ?? [] as $alumni)
                 <!-- Dynamic Card dari Admin / Database -->
                 <div class="bg-white rounded-2xl border border-slate-300 shadow-sm p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                    
+                    <!-- Foto Profil Alumni -->
                     <div class="w-20 h-20 bg-slate-200 rounded-full mb-4 flex items-center justify-center text-slate-400 overflow-hidden">
-                        @if(!empty($alumni->foto))
-                            <img src="{{ asset('storage/' . $alumni->foto) }}" alt="{{ $alumni->nama_lengkap }}" class="w-full h-full object-cover">
+                        @if(!empty($alumni->foto_profil))
+                            <img src="{{ asset('storage/' . $alumni->foto_profil) }}" alt="{{ $alumni->nama }}" class="w-full h-full object-cover">
                         @else
                             <i class="fa-solid fa-user text-3xl"></i>
                         @endif
                     </div>
-                    <h3 class="font-bold text-base text-[#1E1B4B]">{{ $alumni->nama_lengkap }}</h3>
-                    <p class="text-xs text-slate-500 mt-1">{{ $alumni->jurusan }} • Angkatan {{ $alumni->angkatan }}</p>
+
+                    <!-- Nama Alumni -->
+                    <h3 class="font-bold text-base text-[#1E1B4B]">{{ $alumni->nama }}</h3>
+                    
+                    <!-- Jurusan & Angkatan -->
+                    <p class="text-xs text-slate-500 mt-1">
+                        {{ $alumni->jurusan ? $alumni->jurusan . ' • ' : '' }}Angkatan {{ $alumni->angkatan }}
+                    </p>
+
+                    <!-- Status / Posisi Jabatan -->
                     <span class="inline-block mt-3 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-medium">
-                        {{ $alumni->pekerjaan ?? 'Alumni' }}
+                        {{ $alumni->posisi_jabatan ?? $alumni->status ?? 'Alumni' }}
                     </span>
                 </div>
             @empty
                 <!-- Placeholder Sesuai Desain (6 Box) -->
                 @for ($i = 0; $i < 6; $i++)
-                    <div class="bg-white rounded-2xl border border-slate-300 shadow-sm min-h-[260px] flex items-center justify-center p-6 text-center">
-                        <span class="text-xs text-slate-400 font-medium">Ditampilkan dari admin</span>
+                    <div class="bg-white rounded-2xl border border-slate-300 shadow-sm min-h-65 flex items-center justify-center p-6 text-center">
+                        <span class="text-xs text-slate-400 font-medium">Belum ada data alumni</span>
                     </div>
                 @endfor
             @endforelse
         </div>
 
-        <!-- Pagination Placeholder -->
+        <!-- Pagination -->
         @if(isset($alumnis) && method_exists($alumnis, 'links'))
             <div class="mt-8">
                 {{ $alumnis->links() }}
@@ -124,7 +133,7 @@
         @endif
     </main>
 
-   
+    <!-- FOOTER -->
     <x-footer />
 
 </body>
