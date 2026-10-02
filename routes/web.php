@@ -1,12 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AlumniRegistrationController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    return view('home.blade.php');
-});
+// Route Home diproses oleh HomeController
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Route pendaftaran alumni publik
-Route::get('/register-alumni', [AlumniRegistrationController::class, 'index'])->name('alumni.register');
-Route::post('/register-alumni', [AlumniRegistrationController::class, 'store'])->name('alumni.register.store');
+// Route Tracer diproses oleh HomeController
+Route::get('/tracer', [HomeController::class, 'tracer'])->name('tracer');
+
+// Route lainnya
+Route::get('/berita', function () {
+    return view('pages.events');
+})->name('berita');
+
+Route::get('/jobs', function () {
+    return view('pages.jobs');
+})->name('jobs');
+
+Route::get('/register', function () {
+    return view('pages.register');
+})->name('alumni.register');

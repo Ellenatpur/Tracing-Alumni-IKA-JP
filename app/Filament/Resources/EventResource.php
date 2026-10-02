@@ -18,9 +18,9 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static $navigationIcon = 'heroicon-o-calendar';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-calendar';
 
-    protected static $navigationGroup = 'Konten & Kegiatan';
+    protected static \UnitEnum|string|null $navigationGroup = 'Konten & Kegiatan';
 
     public static function form(Schema $schema): Schema
     {

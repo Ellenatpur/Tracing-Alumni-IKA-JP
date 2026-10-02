@@ -21,10 +21,8 @@ class AlumniResource extends Resource
 {
 protected static ?string $model = Alumni::class;
 
-protected static \UnitEnum|string|null $navigationIcon = 'heroicon-o-academic-cap';
-
+protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-academic-cap';
 protected static \UnitEnum|string|null $navigationGroup = 'Manajemen Alumni';
-
     public static function form(Schema $schema): Schema
     {
         return $schema

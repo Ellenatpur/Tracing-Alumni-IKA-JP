@@ -18,9 +18,9 @@ class JobPostingResource extends Resource
 {
     protected static ?string $model = JobPosting::class;
 
-    protected static $navigationIcon = 'heroicon-o-briefcase';
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-briefcase';
 
-    protected static $navigationGroup = 'Karir & Proyek';
+    protected static \UnitEnum|string|null $navigationGroup = 'Karir & Proyek';
 
     public static function form(Schema $schema): Schema
     {
