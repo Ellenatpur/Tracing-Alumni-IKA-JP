@@ -6,10 +6,13 @@ use App\Filament\Resources\AlumniResource\Pages;
 use App\Models\Alumni;
 use Filament\Forms;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Infolists\Components as Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
@@ -114,6 +117,105 @@ class AlumniResource extends Resource
             ]);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Informasi Profil & Data Diri')
+                    ->description('Data identitas utama alumni')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Infolists\ImageEntry::make('foto_profil')
+                            ->label('Foto Profil')
+                            ->circular(),
+                        Infolists\TextEntry::make('nama')
+                            ->label('Nama Lengkap')
+                            ->weight('bold'),
+                        Infolists\TextEntry::make('nim')
+                            ->label('NIM')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('nisn')
+                            ->label('NISN')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('jenis_kelamin')
+                            ->label('Jenis Kelamin')
+                            ->formatStateUsing(fn ($state) => match ($state) {
+                                'L' => 'Laki-laki',
+                                'P' => 'Perempuan',
+                                default => $state ?? '-',
+                            }),
+                        Infolists\TextEntry::make('status_verifikasi')
+                            ->label('Status Verifikasi')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'approved' => 'success',
+                                'pending' => 'warning',
+                                'rejected' => 'danger',
+                                default => 'gray',
+                            }),
+                    ])
+                    ->columns(2),
+
+                Section::make('Informasi Karir & Pekerjaan')
+                    ->description('Data tempat bekerja alumni saat ini (informasi karir / job posting)')
+                    ->icon('heroicon-o-briefcase')
+                    ->schema([
+                        Infolists\TextEntry::make('status')
+                            ->label('Status Saat Ini')
+                            ->badge()
+                            ->color('info'),
+                        Infolists\TextEntry::make('perusahaan_organisasi')
+                            ->label('Perusahaan / Tempat Bekerja')
+                            ->icon('heroicon-o-building-office-2')
+                            ->placeholder('Belum diisi / belum bekerja'),
+                        Infolists\TextEntry::make('posisi_jabatan')
+                            ->label('Posisi / Jabatan')
+                            ->icon('heroicon-o-identification')
+                            ->placeholder('Belum diisi'),
+                    ])
+                    ->columns(3),
+
+                Section::make('Pendidikan & Akademik')
+                    ->description('Riwayat program studi dan kelulusan')
+                    ->icon('heroicon-o-academic-cap')
+                    ->schema([
+                        Infolists\TextEntry::make('jurusan')
+                            ->label('Jurusan')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('angkatan')
+                            ->label('Angkatan')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('tahun_lulus')
+                            ->label('Tahun Lulus')
+                            ->placeholder('-'),
+                    ])
+                    ->columns(3),
+
+                Section::make('Kontak & Domisili')
+                    ->description('Informasi komunikasi dan lokasi alumni')
+                    ->icon('heroicon-o-envelope')
+                    ->schema([
+                        Infolists\TextEntry::make('no_hp')
+                            ->label('No. Handphone')
+                            ->icon('heroicon-o-phone')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('no_telp')
+                            ->label('No. Telepon')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('linkedin_url')
+                            ->label('URL LinkedIn')
+                            ->url(fn ($state) => $state, true)
+                            ->icon('heroicon-o-arrow-top-right-on-square')
+                            ->placeholder('-'),
+                        Infolists\TextEntry::make('alamat')
+                            ->label('Alamat Lengkap')
+                            ->placeholder('-')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(3),
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -126,6 +228,14 @@ class AlumniResource extends Resource
                 Tables\Columns\TextColumn::make('angkatan')->sortable(),
                 Tables\Columns\TextColumn::make('tahun_lulus')->sortable(),
                 Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('perusahaan_organisasi')
+                    ->label('Tempat Bekerja')
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('posisi_jabatan')
+                    ->label('Posisi / Jabatan')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status_verifikasi')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -136,6 +246,7 @@ class AlumniResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable(),
             ])
+            ->recordUrl(fn (Alumni $record): string => Pages\ViewAlumni::getUrl([$record]))
             ->filters([
                 Tables\Filters\SelectFilter::make('status_verifikasi')
                     ->options([
@@ -145,6 +256,7 @@ class AlumniResource extends Resource
                     ]),
             ])
             ->actions([
+                ViewAction::make(),
                 Action::make('approve')
                     ->label('Verifikasi')
                     ->icon('heroicon-o-check-circle')
@@ -177,6 +289,7 @@ class AlumniResource extends Resource
         return [
             'index' => Pages\ListAlumnis::route('/'),
             'create' => Pages\CreateAlumni::route('/create'),
+            'view' => Pages\ViewAlumni::route('/{record}'),
             'edit' => Pages\EditAlumni::route('/{record}/edit'),
         ];
     }

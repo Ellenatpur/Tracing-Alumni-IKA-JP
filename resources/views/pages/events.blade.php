@@ -76,14 +76,14 @@
                         <span><i class="fa-regular fa-user mr-1"></i> {{ $featured_post->penulis ?? 'Admin' }}</span>
                     </div>
                     <h2 class="text-xl sm:text-2xl font-bold text-[#1E1B4B] leading-tight hover:text-cyan-600 transition-colors">
-                        <a href="#">{{ $featured_post->judul }}</a>
+                        <a href="{{ route('berita.detail', $featured_post->id) }}">{{ $featured_post->judul }}</a>
                     </h2>
                     <p class="text-slate-600 text-xs sm:text-sm line-clamp-3 leading-relaxed">
                         {{ Str::limit(strip_tags($featured_post->konten ?? $featured_post->content), 180) }}
                     </p>
                 </div>
                 <div>
-                    <a href="#" class="inline-flex items-center text-xs font-bold text-[#1D63ED] hover:text-blue-700 transition-colors group">
+                    <a href="{{ route('berita.detail', $featured_post->id) }}" class="inline-flex items-center text-xs font-bold text-[#1D63ED] hover:text-blue-700 transition-colors group">
                         Baca Selengkapnya <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                     </a>
                 </div>
@@ -101,9 +101,9 @@
         @forelse($posts ?? [] as $post)
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                 <!-- Thumbnail Gambar -->
-                <div class="h-48 bg-slate-100 relative overflow-hidden">
+                <a href="{{ route('berita.detail', $post->id) }}" class="h-48 bg-slate-100 relative overflow-hidden block">
                     @if(!empty($post->gambar))
-                        <img src="{{ asset('storage/' . $post->gambar) }}" alt="{{ $post->judul }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . $post->gambar) }}" alt="{{ $post->judul }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                     @else
                         <div class="w-full h-full flex items-center justify-center text-slate-300">
                             <i class="fa-solid fa-image text-4xl"></i>
@@ -112,7 +112,7 @@
                     <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-[#1E1B4B] text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm uppercase">
                         {{ $post->kategori ?? 'Informasi' }}
                     </span>
-                </div>
+                </a>
 
                 <!-- Konten Card -->
                 <div class="p-6 flex flex-col justify-between grow space-y-4">
@@ -121,7 +121,7 @@
                             <span><i class="fa-regular fa-clock mr-1"></i> {{ $post->created_at?->format('d M Y') }}</span>
                         </div>
                         <h3 class="font-bold text-base text-[#1E1B4B] line-clamp-2 leading-snug hover:text-cyan-600 transition-colors">
-                            <a href="#">{{ $post->judul }}</a>
+                            <a href="{{ route('berita.detail', $post->id) }}">{{ $post->judul }}</a>
                         </h3>
                         <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed">
                             {{ Str::limit(strip_tags($post->konten ?? $post->content), 120) }}
@@ -130,7 +130,7 @@
 
                     <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span class="text-slate-400 font-medium"><i class="fa-regular fa-user mr-1"></i> {{ $post->penulis ?? 'Admin Portal' }}</span>
-                        <a href="#" class="font-semibold text-[#1D63ED] hover:underline">
+                        <a href="{{ route('berita.detail', $post->id) }}" class="font-semibold text-[#1D63ED] hover:underline">
                             Baca <i class="fa-solid fa-chevron-right text-[10px] ml-0.5"></i>
                         </a>
                     </div>

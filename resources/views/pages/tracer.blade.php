@@ -91,10 +91,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
             @forelse($alumnis ?? [] as $alumni)
                 <!-- Dynamic Card dari Admin / Database -->
-                <div class="bg-white rounded-2xl border border-slate-300 shadow-sm p-6 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                <a href="{{ route('tracer.detail', $alumni->id) }}" 
+                   class="bg-white rounded-2xl border border-slate-300 shadow-sm p-6 flex flex-col items-center text-center hover:shadow-lg hover:border-slate-400 hover:-translate-y-1 transition-all duration-200 group block relative">
                     
                     <!-- Foto Profil Alumni -->
-                    <div class="w-20 h-20 bg-slate-200 rounded-full mb-4 flex items-center justify-center text-slate-400 overflow-hidden">
+                    <div class="w-20 h-20 bg-slate-200 rounded-full mb-4 flex items-center justify-center text-slate-400 overflow-hidden ring-4 ring-slate-100 group-hover:ring-[#314E6E]/20 transition-all">
                         @if(!empty($alumni->foto_profil))
                             <img src="{{ asset('storage/' . $alumni->foto_profil) }}" alt="{{ $alumni->nama }}" class="w-full h-full object-cover">
                         @else
@@ -103,18 +104,34 @@
                     </div>
 
                     <!-- Nama Alumni -->
-                    <h3 class="font-bold text-base text-[#1E1B4B]">{{ $alumni->nama }}</h3>
+                    <h3 class="font-bold text-base text-[#1E1B4B] group-hover:text-[#314E6E] transition-colors">{{ $alumni->nama }}</h3>
                     
                     <!-- Jurusan & Angkatan -->
                     <p class="text-xs text-slate-500 mt-1">
                         {{ $alumni->jurusan ? $alumni->jurusan . ' • ' : '' }}Angkatan {{ $alumni->angkatan }}
                     </p>
 
+                    <!-- Tempat Bekerja / Perusahaan (Sesuai info pekerjaan) -->
+                    @if(!empty($alumni->perusahaan_organisasi))
+                        <div class="mt-2.5 px-3 py-1 bg-slate-50 rounded-lg text-xs font-semibold text-slate-700 flex items-center gap-1.5 border border-slate-200/60 max-w-full truncate">
+                            <i class="fa-solid fa-building text-slate-400 text-[11px] shrink-0"></i>
+                            <span class="truncate">{{ $alumni->perusahaan_organisasi }}</span>
+                        </div>
+                    @endif
+
                     <!-- Status / Posisi Jabatan -->
-                    <span class="inline-block mt-3 px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-medium">
-                        {{ $alumni->posisi_jabatan ?? $alumni->status ?? 'Alumni' }}
-                    </span>
-                </div>
+                    <div class="mt-2.5">
+                        <span class="inline-block px-3 py-1 bg-blue-50 text-[#314E6E] rounded-full text-xs font-medium border border-blue-100">
+                            {{ $alumni->posisi_jabatan ?? $alumni->status ?? 'Alumni' }}
+                        </span>
+                    </div>
+
+                    <!-- Tombol Lihat Profil -->
+                    <div class="mt-4 pt-3 border-t border-slate-100 w-full flex items-center justify-center text-xs font-semibold text-[#314E6E] group-hover:text-[#1E1B4B] transition-colors gap-1.5">
+                        <span>Lihat Profil</span>
+                        <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </a>
             @empty
                 <!-- Placeholder Sesuai Desain (6 Box) -->
                 @for ($i = 0; $i < 6; $i++)

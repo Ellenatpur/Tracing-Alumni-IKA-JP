@@ -51,10 +51,26 @@ class HomeController extends Controller
         return view('pages.tracer', compact('alumnis'));
     }
 
-    // Halaman Berita
+    // Halaman Detail Profil Alumni
+    public function alumniDetail(Alumni $alumni)
+    {
+        // Lowongan kerja aktif dari admin job posting
+        $relatedJobs = JobPosting::where('is_active', true)->latest()->take(3)->get();
+
+        // Alumni lainnya dari jurusan yang sama
+        $otherAlumnis = Alumni::where('id', '!=', $alumni->id)
+            ->where('status_verifikasi', 'approved')
+            ->when($alumni->jurusan, fn($q) => $q->where('jurusan', $alumni->jurusan))
+            ->take(3)
+            ->get();
+
+        return view('pages.alumni-detail', compact('alumni', 'relatedJobs', 'otherAlumnis'));
+    }
+
+    // Halaman Berita & Artikel
     public function berita(Request $request)
     {
-        $query = Post::query();
+        $query = Post::query()->where('is_published', true);
 
         if ($request->filled('q')) {
             $search = $request->q;
@@ -64,15 +80,28 @@ class HomeController extends Controller
             });
         }
 
+        $featured_post = Post::where('is_published', true)->latest()->first();
         $posts = $query->latest()->paginate(6);
 
-        return view('pages.berita', compact('posts'));
+        return view('pages.events', compact('posts', 'featured_post'));
+    }
+
+    // Halaman Detail Berita & Artikel
+    public function beritaDetail(Post $post)
+    {
+        $recentPosts = Post::where('id', '!=', $post->id)
+            ->where('is_published', true)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return view('pages.post-detail', compact('post', 'recentPosts'));
     }
 
     // Halaman Lowongan Kerja
     public function jobs(Request $request)
     {
-        $query = JobPosting::query();
+        $query = JobPosting::query()->where('is_active', true);
 
         if ($request->filled('q')) {
             $search = $request->q;
@@ -84,7 +113,11 @@ class HomeController extends Controller
         }
 
         if ($request->filled('tipe')) {
-            $query->where('tipe_pekerjaan', $request->tipe);
+            $tipe = $request->tipe;
+            $query->where(function($q) use ($tipe) {
+                $q->where('tipe', $tipe)
+                  ->orWhere('tipe', 'like', "%{$tipe}%");
+            });
         }
 
         if ($request->filled('lokasi')) {
@@ -94,5 +127,22 @@ class HomeController extends Controller
         $jobs = $query->latest()->paginate(6);
 
         return view('pages.jobs', compact('jobs'));
+    }
+
+    // Halaman Detail Lowongan Kerja
+    public function jobDetail(JobPosting $job)
+    {
+        $otherJobs = JobPosting::where('id', '!=', $job->id)
+            ->where('is_active', true)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $relatedAlumnis = Alumni::where('status_verifikasi', 'approved')
+            ->whereNotNull('perusahaan_organisasi')
+            ->take(3)
+            ->get();
+
+        return view('pages.job-detail', compact('job', 'otherJobs', 'relatedAlumnis'));
     }
 }

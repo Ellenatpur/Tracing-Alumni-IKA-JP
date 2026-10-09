@@ -30,7 +30,6 @@ class EventResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                // Menggunakan tanggal_event sesuai struktur database
                 Forms\Components\DateTimePicker::make('tanggal_event')
                     ->label('Tanggal & Waktu Event')
                     ->required(),
