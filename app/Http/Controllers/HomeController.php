@@ -145,4 +145,51 @@ class HomeController extends Controller
 
         return view('pages.job-detail', compact('job', 'otherJobs', 'relatedAlumnis'));
     }
+
+    // Halaman Form Pendaftaran Alumni
+    public function register()
+    {
+        return view('pages.register');
+    }
+
+    // Proses Simpan Pendaftaran Alumni
+    public function registerSubmit(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'nim' => 'nullable|string|max:255',
+            'jenis_kelamin' => 'required|in:L,P',
+            'jurusan' => 'nullable|string|max:255',
+            'angkatan' => 'required|digits:4',
+            'tahun_lulus' => 'required|digits:4',
+            'status' => 'required|string|max:255',
+            'perusahaan_organisasi' => 'nullable|string|max:255',
+            'posisi_jabatan' => 'nullable|string|max:255',
+            'linkedin_url' => 'nullable|url|max:255',
+            'no_hp' => 'nullable|string|max:50',
+            'no_telp' => 'nullable|string|max:50',
+            'alamat' => 'nullable|string',
+            'foto_profil' => 'nullable|image|max:2048',
+        ], [
+            'nama.required' => 'Nama lengkap wajib diisi.',
+            'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
+            'angkatan.required' => 'Tahun angkatan wajib diisi 4 digit angka.',
+            'tahun_lulus.required' => 'Tahun kelulusan wajib diisi 4 digit angka.',
+            'status.required' => 'Status aktivitas saat ini wajib dipilih.',
+            'foto_profil.image' => 'File foto profil harus berformat gambar.',
+            'foto_profil.max' => 'Ukuran foto profil maksimal 2MB.',
+        ]);
+
+        if ($request->hasFile('foto_profil')) {
+            $path = $request->file('foto_profil')->store('alumni-photos', 'public');
+            $validated['foto_profil'] = $path;
+        }
+
+        $validated['status_verifikasi'] = 'pending';
+
+        Alumni::create($validated);
+
+        return redirect()->route('alumni.register')
+            ->with('success', 'Terima kasih telah mendaftar! Data Anda sedang menunggu verifikasi oleh pihak admin.');
+    }
 }

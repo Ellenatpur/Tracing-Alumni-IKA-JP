@@ -11,4 +11,9 @@ class Alumni extends Model
 
     // Membuka keamanan mass assignment agar Filament bisa menyimpan semua field
     protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

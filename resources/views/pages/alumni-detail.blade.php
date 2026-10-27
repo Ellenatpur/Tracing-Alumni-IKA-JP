@@ -228,10 +228,6 @@
                             <span class="font-bold text-slate-800 text-sm">{{ $alumni->nim ?? '-' }}</span>
                         </div>
                         <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <span class="text-slate-400 text-xs block mb-1">NISN</span>
-                            <span class="font-bold text-slate-800 text-sm">{{ $alumni->nisn ?? '-' }}</span>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
                             <span class="text-slate-400 text-xs block mb-1">Jenis Kelamin</span>
                             <span class="font-bold text-slate-800 text-sm">
                                 {{ $alumni->jenis_kelamin === 'L' ? 'Laki-laki' : ($alumni->jenis_kelamin === 'P' ? 'Perempuan' : '-') }}

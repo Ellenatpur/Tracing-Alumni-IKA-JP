@@ -35,10 +35,6 @@ class AlumniResource extends Resource
                     ->label('NIM')
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('nisn')
-                    ->label('NISN')
-                    ->maxLength(255),
-
                 // Kolom Wajib (NOT NULL)
                 Forms\Components\TextInput::make('nama')
                     ->label('Nama Lengkap')
@@ -133,9 +129,6 @@ class AlumniResource extends Resource
                             ->weight('bold'),
                         Infolists\TextEntry::make('nim')
                             ->label('NIM')
-                            ->placeholder('-'),
-                        Infolists\TextEntry::make('nisn')
-                            ->label('NISN')
                             ->placeholder('-'),
                         Infolists\TextEntry::make('jenis_kelamin')
                             ->label('Jenis Kelamin')
